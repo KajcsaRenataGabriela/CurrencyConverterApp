@@ -13,6 +13,7 @@ Perks:
 Screenshots:
 <p float="left">
   <img src="/screenShot_1.png" width="200" />
-  <img src="/screenShot_2.png.png" width="200" /> 
-  <img src="/screenShot_3.png.png" width="200" />
+  <img src="/screenShot_2.png" width="200" /> 
+  <img src="/screenShot_3.png" width="200" />
+  <img src="/screenShot_4.png" width="200" />
 </p>
