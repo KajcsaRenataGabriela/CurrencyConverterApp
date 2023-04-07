@@ -4,14 +4,14 @@ A money converter app designed using Flutter for learning purposes.
 This app converts EUR to RON.
 
 Perks:
-    * form validation
-    * paste proof
-    * digits and decimals only
-    * automatically puts currency (EUR) to input string 
-    * limits input to 16 characters
+* form validation
+* paste proof
+* digits and decimals only
+* automatically puts currency (EUR) to input string 
+* limits input to 16 characters
 
 Future implementation ideas:
-    * ability to change user input and output currency
+* ability to change user input and output currency
 
 Screenshots:
 <p float="left">
