@@ -10,6 +10,9 @@ Perks:
     - automatically puts currency (EUR) to input string 
     - limits input to 16 characters
 
+Future implementation ideas:
+    - ability to change user input and output currency
+
 Screenshots:
 <p float="left">
   <img src="/screenShot_1.png" width="200" />
