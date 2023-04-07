@@ -10,38 +10,55 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late TextEditingController _controller;
-  late TextEditingController _resultController;
-  bool _validate = false;
-  double _moneyAmount = 0;
-  double _result = 0;
-  double _input = 0;
+  final _textFormController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  double _inputAmount = 0;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
-    _resultController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _resultController.dispose();
+    _textFormController.dispose();
     super.dispose();
   }
 
-  void _convertToEuro(){
-    _input = double.parse(_controller.text);
-    _result = (_input * 4.95) as double;
+  // convert the input into RON
+  void _convertToEuro() {
+    var text = _textFormController.text.replaceAll(" EUR", '');
+    // If input is 0, replace it with a string '0'
+    if (RegExp(r'^0(\.0+)').hasMatch(text)) {
+      _textFormController.value = const TextEditingValue(text: '0');
+      text = 0 as String;
+    }
+
+    // Validate the form and input, then calculate the amount
+    _formKey.currentState!.validate() && _textFormController.text == ''
+        ? _inputAmount = 0
+        : _inputAmount = double.parse(text) * 4.9;
+  }
+
+  // Validate the input value
+  String? validate(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a number';
+    }
+
+    // Regex pattern to allow digits, decimal point, and ' EUR' at the end of the string
+    final numberPattern = RegExp(r'^\d*\.?\d{0,13}( EUR)?$');
+    if (!numberPattern.hasMatch(value)) {
+      return 'Please enter a valid number';
+    }
+
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -49,38 +66,52 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 270,
               width: double.infinity,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image:
-                        AssetImage('assets/images/currencyConverterImage.jpg'),
-                    fit: BoxFit.cover),
-              ),
+                  image: DecorationImage(
+                      image: AssetImage(
+                          'assets/images/currencyConverterImage.jpg'),
+                      fit: BoxFit.cover)),
               child: const SizedBox()),
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: "Enter your number",
-              errorText: _validate ? 'Value Can\'t Be Empty' : null,
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ], // Only numbers can be entered
-          ),
+          Form(
+              key: _formKey,
+              child: TextFormField(
+                  controller: _textFormController,
+                  validator: (value) {
+                    return validate(value);
+                  },
+                  decoration:
+                      const InputDecoration(labelText: "Enter your number"),
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true, signed: false),
+                  //  Allow digits, decimal point, and ' RON' at the end of the string),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,13}( EUR)?$'))
+                  ],
+                  maxLength: 16,
+                  // actually it is 12, because of ' RON'
+                  onChanged: (text) {
+                    // Manipulate the input text
+                    final updatedText =
+                        text.replaceAll(' EUR', '').trim() + ' EUR';
+                    if (updatedText != _textFormController.text) {
+                      final cursorPosition = updatedText.indexOf(' EUR');
+                      _textFormController.value = _textFormController.value
+                          .copyWith(
+                              text: updatedText,
+                              selection: TextSelection.collapsed(
+                                  offset: cursorPosition));
+                    }
+                  })),
           TextButton(
-            child: const Text(
-              'Calculate',
-              style: TextStyle(fontSize: 20.0, color: Colors.pink),
-            ),
-            onPressed: () {
-              setState(() {
-                _controller.text.isEmpty ? _validate = true : _validate = false;
-                //if(_validate){
-                  _convertToEuro();
-                //}
-              });
-            },
-          ),
-          Text(_result.toString()),
+              child: const Text('Calculate',
+                  style: TextStyle(fontSize: 20.0, color: Colors.pink)),
+              onPressed: () {
+                setState(() {});
+                _convertToEuro();
+              }),
+          Text(_inputAmount != 0
+              ? '${_inputAmount.toStringAsFixed(5).replaceAll(RegExp(r'0*$'), '')} RON' // Removes the 0's after result
+              : '')
         ],
       ),
     );
