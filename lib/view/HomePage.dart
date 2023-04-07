@@ -110,8 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 _convertToEuro();
               }),
           Text(_inputAmount != 0
-              ? '${_inputAmount.toStringAsFixed(5).replaceAll(RegExp(r'0*$'), '')} RON' // Removes the 0's after result
-              : '')
+              ? _inputAmount.round() == _inputAmount
+                  ? _inputAmount.toString()
+                  : '${_inputAmount.toStringAsFixed(2)} RON' // Removes the 0's after result
+              : '0 RON')
         ],
       ),
     );
