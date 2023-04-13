@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_converter_app/view/HomePage.dart';
+import 'view/HomePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,5 +19,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
